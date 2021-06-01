@@ -1,0 +1,27 @@
+package com.kh.spring.board.model.vo;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
+@ToString
+
+public class Board {
+	
+	private int board_no;
+	private String board_title;
+	private String board_write;
+	private String board_content;
+	private String origin_name;
+	private String change_name;
+	private int count;
+	private String create_date;
+	private String status;
+
+}

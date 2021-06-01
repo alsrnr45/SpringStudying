@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" />
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<context:component-scan base-package="com.kh.spring" />
+	
+	<!-- 
+		사용자가 어떤 url로 요청을 할때마다 web.xml문서에 등록되어있는 DispatcherServlet가 구동됨
+		이때 해당 servlet-context.xml문서가 읽혀짐!
+		
+		그 때 HandlerMapping을 통해서 어떤 url로 요청시 어떤 Controller를 실행시킬 건지 
+		알아내서 해당 Controller가 실행되도록 해야됨!!
+		
+		=> 그러기 위해서 그때마다 실행할 Controller 클래스들이 빈(bean)으로 등록되어있어야됨
+		=> 어떤 url로 요청시 어떤 Controller를 구동시킬건지 매핑되어있는 구문도 작성되어야 됨
+	 -->
+	
+	<!-- 
+	xml 방식 (직접 xml에 작성) 
+	<beans:bean id="loginController" class="com.kh.spring.member.controller.LoginController" />
+	<beans:bean id="logoutController" class="com.kh.spring.member.controller.LogoutController" />
+	
+	<beans:bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<beans:property name="mappings">
+			<beans:props>
+				<beans:prop key="login.me">loginController</beans:prop>
+				<beans:prop key="logout.me">logoutController</beans:prop>
+			</beans:props>
+		</beans:property>
+	</beans:bean>
+	
+	<-> annotation 방식(class에서 작성)
+	xml방식의 
+	- 장점: 한 눈에 등록된 빈들을 볼 수도 있고 mapping되는 것도 볼수 있어서 관리의 편의성은 높음
+	- 단점: bean 개수가 많아질수록 xml파일을 관리하기에는 어려워짐( 여러 개발자가 같은 설정파일을 수정하면 충돌가능 )
+	annotation 방식
+	: Controller클래스 상단에 @Controller annotation 기재 
+	> 각 url 요청에 맞춰서 실행할 메소드 위 @RequestMapping("url-pattern") annotation 기재
+	> <annotation-driven />
+	  <context:component-scan base-packag="com.kh.spring" />
+	- 장점 : 
+	- 단점 :
+	 -->
+	
+	 
+</beans:beans>

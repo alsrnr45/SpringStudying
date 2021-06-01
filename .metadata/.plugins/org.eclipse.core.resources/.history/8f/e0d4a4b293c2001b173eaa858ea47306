@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	
+	<!-- 
+		root-context.xml 파일은 서버 구동 시 web.xml을 거쳐 바로 로딩(pre-loading) 되는 설정 파일
+		=> 서버 구동 시 바로 세팅해야되는 내용을 작성하는 설정 파일 
+		   ( 보통 DB연결 설정, 트랜잭션 처리, AOP관련, 내외부 모듈 연동 관련 등등 ) 
+		   
+	 -->
+	 
+	 <!-- xml 방식의 bean 등록 방법 (개발자역할)-->
+	 <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+	 	<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+	 	<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe" />
+	 	<property name="username" value="spring" />
+	 	<property name="password" value="spring" />
+	 </bean>
+	 
+	 <!-- 스프링의 역할 : setter 메소드를 통해 필드에 값 넣어서 주입
+	 	BasicDataSource dataSource = new BasicDataSource();
+	 	dataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
+	 	dataSource.setUrl("jdbc:oracle:thin:@localhost:1521:xe");
+	 	dataSource.setUsername("spring");
+	 	dataSource.setPassword("spring");
+	  -->
+	  
+	  <!-- sqlSession과 같은 객체 등록 -->
+	  <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	  	<property name="configLocation" value="classpath:mybatis-config.xml" />
+	  	<property name="dataSource" ref="dataSource" />
+	  </bean>
+	  
+  	  <!-- 
+	  	SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
+	  	sqlSessionFactory.setConfigLocation("classpath:mybatis-config.xml");
+	  	sqlSessionFactory.setDataSource(dataSource);
+	   -->
+	   
+	  <!-- 개발자의 역할, 궁극적으로 필요한 것 : sqlSession -->
+	  <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+	  	<constructor-arg ref="sqlSessionFactory" />
+	  </bean>
+	  <!-- 
+	  	SqlSessionTemplate sqlSession = new SqlSessionTemplate(sqlSessionFactory);
+	   -->
+	   
+	   <!--  
+	   	property : setter DI(의존주입)
+	   	constructor-args : 생성자 DI
+	    -->
+	 <!-- 파일업로드 관련 빈 등록 -->
+	  <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	  	<property name=""></property>
+	  </bean>
+</beans>
