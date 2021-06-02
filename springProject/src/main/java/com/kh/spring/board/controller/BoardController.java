@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -76,6 +77,14 @@ public class BoardController {
 	
 	@RequestMapping("insert.bo")
 	public String insertBoard(Board b, MultipartFile upfile, HttpSession session, ModelAndView mv) {
+		/*
+		 * 만약 다중첨부파일 업로드 기능일 경우?
+		 * <input type="file"> 요소들 다 동일한 키값으로 부여
+		 * Controller쪽에서 매개변수로 MultipartFile[](배열) 키 값 로 받으면 됨
+		 * 
+		 * 
+		 */
+		
 		// 곧바로 받아지지 않음 => 파일업로드 관련 라이브러리 추가 + 파일업로드 관련 클래스 '빈' 등록
 		
 		// 전달된 파일이 있을 경우 => 파일 수정 작업 후 서버에 업로드
@@ -121,7 +130,7 @@ public class BoardController {
 		if(result>0) {
 			session.setAttribute("alertMsg", "성공적으로 게시글을 작성했습니다.");
 			mv.addObject("b", b);
-			return "redirect:/";
+			return "redirect:list.bo";
 		} else {
 			mv.addObject("errorPage", "게시글 작성 실패");
 			return "common/errorPage";
@@ -153,5 +162,39 @@ public class BoardController {
 		}
 		
 		return changeName;
+	}
+	
+	@RequestMapping("detail.bo")
+	public String selectBoard(int bno, Model model) {
+		int result = bService.increaseCount(bno);
+		
+		if(result>0) {
+			Board b = bService.selectBoard(bno);
+			model.addAttribute("b", b);
+			return "board/boardDetailView";
+		} else {
+			model.addAttribute("errorMsg", "게시글 조회 실패!");
+			return "common/errorPage";
+		}
+	}
+	
+	@RequestMapping("delete.bo")
+	public String deleteBoard(int bno, String filePath, HttpSession session, Model model) {
+			// filePath : 첨부파일 존재하면 "경로" <-> 존재x: ""
+		
+		int result = bService.deleteBoard(bno);
+		
+		if(result>0) {
+			// 성공시 첨부파일 있을경우, 서버에 업로드된 파일 찾아서 삭제
+			if(!filePath.equals("")) {
+				new File(session.getServletContext().getRealPath(filePath)).delete(); // 해당 파일경로를 찾아서 문자열로 반환해주는 메소드
+			}
+			//
+			session.setAttribute("alertMsg", "성공적으로 삭제되었습니다.");
+			return "redirect:list.bo";
+		} else {
+			model.addAttribute("errorMsg", "게시글 삭제 실패");
+			return "common/errorPage";
+		}
 	}
 }

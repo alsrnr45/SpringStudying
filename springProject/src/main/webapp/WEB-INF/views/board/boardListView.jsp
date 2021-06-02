@@ -56,7 +56,7 @@
                 <tbody>
                 	<c:forEach var="b" items="${ list }">
                     <tr>
-                        <td>${ b.boardNo }</td>
+                        <td class="bno">${ b.boardNo }</td>
                         <td>${ b.boardTitle }</td>
                         <td>${ b.boardWriter }</td>
                         <td>${ b.count }</td>
@@ -70,6 +70,15 @@
                     </c:forEach>
                 </tbody>
             </table>
+            <script>
+            $(function(){
+            	$("#boardList tbody tr").click(function(){
+            		location.href="detail.bo?bno=" + $(this).children(".bno").text();
+            		// 선택한 요소의 자손들 중에 class가 bno인 값의 text(b.boardNo의 숫자)를 가져오겠다
+            	})
+            })
+            </script>
+            
             <br>
 
             <div id="pagingArea">
