@@ -1,0 +1,14 @@
+package com.kh.ajax;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public class AjaxController {
+	
+	@RequestMapping("ajax1.do")
+	public void ajaxMethod1(String name, int age) {
+		// 요청처리 다 했다는 가정하에 현재 그 페이지에 다시 돌려줄 응답데이터있을 경우
+		String responseData = "응답 문자열 : " + name + "는 " + age + "살 입니다";
+	}
+}

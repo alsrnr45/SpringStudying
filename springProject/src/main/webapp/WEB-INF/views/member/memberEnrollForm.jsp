@@ -34,10 +34,12 @@
             <h2>회원가입</h2>
             <br>
 
-            <form action="insert.me" method="post" onsubmit="">
+            <form action="insert.me" method="post" id="enrollForm">
                 <div class="form-group">
                     <label for="userId">* ID :</label>
                     <input type="text" class="form-control" id="userId" name="userId" placeholder="Please Enter ID" required><br>
+                    <div id="checkResult" style="display:none; font-size:0.8em;"></div>
+                    <br>
                     
                     <label for="userPwd">* Password :</label>
                     <input type="password" class="form-control" id="userPwd" name="userPwd" placeholder="Please Enter Password" required><br>
@@ -69,13 +71,51 @@
                 </div>
                 <br>
                 <div class="btns" align="center">
-                    <button type="submit" class="btn btn-primary">회원가입</button>
+                    <button type="submit" class="btn btn-primary" id="enrollBtn" disabled>회원가입</button>
                     <button type="reset" class="btn btn-danger"> 초기화</button>
                 </div>
             </form>
         </div>
         <br><br>
     </div>
+    
+    <script>
+    	$(function(){
+    		var $idInput = $("#enrollForm input[name=userId]");
+    		
+    		$idInput.keyup(function(){
+    			// 우선 최소 5글자 이상으로 입력했을때만 ajax 요청해서 중복체크 하도록
+    			if($idInput.val().length >=5){
+    				
+    				$.ajax({
+    					url:"idCheck.me",
+    					data:{checkId:$idInput.val()},
+    					success:function(result){
+    						if(result == "N"){ // 사용불가
+    							// 메세지 빨간색 출력, 버튼 비활성화
+    							$("#checkResult").show();
+    							$("#checkResult").css("color","red").text("중복된 아이디가 존재합니다. 다시 입력해주세요.");
+    							$("#enrollBtn").attr("disabled", true);
+    						} else{ // 사용가능
+    							$("#checkResult").show();
+    							$("#checkResult").css("color","green").text("사용가능한 아이디입니다");
+    							$("#enrollBtn").removeAttr("disabled");
+    						}
+    					}, error:function(){
+    						conosole.log("아이디 중복체크 ajax 통신 실패");
+    					}
+    					
+    				})
+    				
+    			} else{ // 아이디가 5글자 미만일경우 => 유효하지 않아 가입자체 못하게 함
+    				$("#enrollBtn").attr("disabled", true);
+    				$("#checkResult").hide();
+    			}
+    			
+    		})
+    		
+    	})
+    </script>
 
     <!-- 이쪽에 푸터바 포함할꺼임 -->
     <jsp:include page="../common/footer.jsp"/>

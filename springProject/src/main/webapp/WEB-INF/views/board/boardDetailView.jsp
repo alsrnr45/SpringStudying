@@ -75,7 +75,7 @@
 	            <script>
 	            	function postFormSubmit(num){
 	            		if(num == 1){ // 수정하기 클릭
-	            			$("#postForm").attr("action", "update.bo").submit();
+	            			$("#postForm").attr("action", "updateForm.bo").submit();
 	            		} else{ // 삭제하기 클릭
 	            			$("#postForm").attr("action", "delete.bo").submit();
 	            			// id가 postForm의 action요소를 delete.bo로 바꾸고 submit() 시키겠다.
@@ -88,36 +88,85 @@
             <table id="replyArea" class="table" align="center">
                 <thead>
                     <tr>
-                        <th colspan="2">
-                            <textarea class="form-control" name="" id="content" cols="55" rows="2" style="resize:none; width:100%"></textarea>
-                        </th>
-                        <th style="vertical-align: middle"><button class="btn btn-secondary">등록하기</button></th>
+
+                        <c:choose>
+                        	<c:when test="${ empty loginUser }">
+                            	<th colspan="2">
+                        			<textarea class="form-control" name="" id="content" cols="55" rows="2" style="resize:none; width:100%" readonly>로그인한 사용자만 가능한 서비스입니다. 로그인 후 이용해주세요.</textarea>
+                        		</th>
+                        		<th style="vertical-align: middle"><button class="btn btn-secondary" disabled>등록하기</button></th>
+                            </c:when>
+                            <c:otherwise>
+                            	<th colspan="2">
+	                        		<textarea class="form-control" name="replyContent" id="content" cols="55" rows="2" style="resize:none; width:100%"></textarea>
+	                        	</th>
+	                        	<th style="vertical-align: middle"><button class="btn btn-secondary" onclick="addReply();">등록하기</button></th>
+	                        </c:otherwise>
+                        </c:choose>
+                        
                     </tr>
                     <tr>
-                       <td colspan="3">댓글 (<span id="rcount">3</span>) </td> 
+                       <td colspan="3">댓글 (<span id="rcount"></span>) </td> 
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th>user02</th>
-                        <td>댓글입니다.너무웃기다앙</td>
-                        <td>2020-04-10</td>
-                    </tr>
-                    <tr>
-                        <th>user01</th>
-                        <td>많이봐주세용</td>
-                        <td>2020-04-08</td>
-                    </tr>
-                    <tr>
-                        <th>admin</th>
-                        <td>댓글입니다ㅋㅋㅋ</td>
-                        <td>2020-04-02</td>
-                    </tr>
+                
                 </tbody>
             </table>
         </div>
         <br><br>
     </div>
+    
+    <script>
+    	$(function(){
+    		selectReplyList();
+    	})
+    	
+    	function addReply(){
+    		if($("#content").val().trim().length != 0){ // 댓글 작성 되었을 경우, trim()공백 제거했을 경우
+        		$.ajax({
+        			url:"rinsert.bo",
+        			data:{// key값(필드명) : jsp에 기술되어있는 값 
+        			      refBoardNo:${b.boardNo},
+        				  replyWriter:'${loginUser.userId}',
+        				  replyContent:$("#content").val()
+        			},
+        			success:function(status){
+        				if(status == "success"){
+        					$("#content").val("");
+        					selectReplyList(); // 갱신된 리스트 다시 호출-> 그래서 일부러 메소드 밑에 배치한것
+        				}
+        			},error:function(){
+        				console.log("댓글 작성용 ajax 통신 실패");
+        			}
+        		})
+    		} else{ // 댓글 작성 안되었을 경우
+    			alertify.alert("댓글의 내용을 작성해야 합니다");
+    		}
+    	}
+    	
+    	function selectReplyList(){
+    		$.ajax({
+    			url:"rlist.bo",
+    			data:{bno:${b.boardNo}}, // 번호(숫자)라서 "" 안하는것
+    			success:function(list){	
+    				var value =""
+					$.each(list, function(i, obj){ // i- 인덱스, obj(객체값)
+						value += "<tr>"
+						         + "<td>" + obj.replyWriter + "</td>"
+						         + "<td>" + obj.replyContent + "</td>"
+						         + "<td>" + obj.createDate + "</td>"
+						         + "</tr>";
+					})
+					
+					$("#replyArea tbody").html(value);
+    				$("#rcount").text(list.length);
+    			}, error:function(){
+    				console.log("댓글 리스트 조회용 ajax 실패!");
+    			}
+    		})
+    	}
+    </script>
 
     <!-- 이쪽에 푸터바 포함할꺼임 -->
     <jsp:include page="../common/footer.jsp"/>

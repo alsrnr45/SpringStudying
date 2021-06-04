@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.spring.board.model.dao.BoardDao;
 import com.kh.spring.board.model.vo.Board;
+import com.kh.spring.board.model.vo.Reply;
 import com.kh.spring.common.model.vo.PageInfo;
 
 @Service
@@ -48,13 +49,25 @@ public class BoardServiceImpl implements BoardService{
 
 	@Override
 	public int updateBoard(Board b) {
-		// TODO Auto-generated method stub
-		return 0;
+
+		return bDao.updateBoard(b, sqlSession);
 	}
 
 	@Override
 	public int deleteBoard(int boardNo) {
 		return bDao.deleteBoard(sqlSession, boardNo);
 	}
+
+	@Override
+	public ArrayList<Reply> selectReplyList(int boardNo) {
+		
+		return bDao.selectReplyList(sqlSession, boardNo);
+	}
+
+	@Override
+	public int insertReply(Reply r) {
+		return bDao.insertReply(sqlSession, r);
+	}
+	
 
 }

@@ -10,6 +10,7 @@
         #enrollForm>table{width:100%;}
         #enrollForm>table *{ margin:5px;}
 </style>
+<script src="//cdn.ckeditor.com/4.16.1/standard/ckeditor.js"></script>
 </head>
 <body>
 
@@ -40,7 +41,7 @@
                         <th colspan="2"><label for="content">내용</label></th>
                     </tr>
                     <tr>
-                        <th colspan="2"><textarea class="form-control" required name="boardContent" id="content" rows="10" style="resize:none;"></textarea></th>
+                        <th colspan="2"><textarea class="form-control ckeditor" required name="boardContent" id="content" rows="10" style="resize:none;"></textarea></th>
                     </tr>
                 </table>
                 <br>
@@ -53,7 +54,6 @@
         </div>
         <br><br>
     </div>
-
     <!-- 이쪽에 푸터바 포함할꺼임 -->
     <jsp:include page="../common/footer.jsp"/>
 

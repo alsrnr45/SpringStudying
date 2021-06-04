@@ -15,6 +15,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="create_date" property="createDate"/>
 		<result column="status" property="status"/>
 	</resultMap>
+	
+	<resultMap type="Reply" id="reply">
+		<id column="reply_no" property="replyNo" />
+		<result column="reply_writer" property="replyWriter" />
+		<result column="reply_content" property="replyContent" />
+		<result column="create_date" property="createDate" />
+	</resultMap>
 	<select id="selectListCount" resultType="_int">
 		select 
 		       count(*)
@@ -88,4 +95,46 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		 where board_no = #{boardNo}
 	
 	</update>
+	
+	<update id="updateBoard" parameterType="Board">
+		update 
+		       board
+		   set board_title = #{boardTitle}
+		     , board_content = #{boardContent}
+		     , origin_name = #{originName}
+		     , change_name = #{changeName}
+		 where board_no = #{boardNo}
+
+	</update>
+	
+	<select id="selectReplyList" resultMap="reply" parameterType="_int">
+		select 
+		       reply_no
+		     , reply_content
+		     , reply_writer
+		     , to_char(create_date, 'YYYY-MM-DD') create_date
+		  from reply
+		 where status = 'Y'
+		   and ref_bno = #{boardNo}
+		 order 
+		    by reply_no desc
+	</select>
+	
+	<insert id="insertReply" parameterType="Reply">
+		insert
+		  into reply
+		     ( reply_no
+		     , reply_content
+		     , ref_bno
+		     , reply_writer
+		     , create_date
+		     )
+		       values
+		     ( seq_rno.nextval
+		     , #{replyContent}
+		     , #{refBoardNo}
+		     , #{replyWriter}
+		     , sysdate
+		     )
+	</insert>
 </mapper>

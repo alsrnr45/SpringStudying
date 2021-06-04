@@ -1,6 +1,5 @@
 package com.kh.spring.member.controller;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,11 +7,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.spring.member.model.service.MemberService;
-import com.kh.spring.member.model.service.MemberServiceImpl;
 import com.kh.spring.member.model.vo.Member;
 
 // annotation방식  => 빈 스캐닝을 통해 자동으로 빈으로 등록될 것임(스프링이 알아서 관리)
@@ -311,5 +309,22 @@ public class MemberController {
 			session.setAttribute("alertMsg", "비밀번호가 일치하지 않습니다");
 			return "redirect:myPage.me";
 		}
+	}
+	
+	@ResponseBody
+	@RequestMapping("idCheck.me")
+	public String ajaxIdCheck(String checkId) {
+		
+		int count = mService.idCheck(checkId);
+		
+		/*
+		if(count>0) { // 일치하는게 있음 => 사용불가
+			return "N";
+		} else { // 일치하는게 없음 => 사용가능
+			return "Y";
+		}
+		*/
+		
+		return count>0 ? "N" : "Y";
 	}
 }
