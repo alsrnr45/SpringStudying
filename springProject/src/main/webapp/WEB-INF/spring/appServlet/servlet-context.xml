@@ -66,6 +66,14 @@
 	- 장점 : 
 	- 단점 :
 	 -->
-	
+	<interceptors>
+		<interceptor>
+			<mapping path="/myPage.me" />
+			<mapping path="/enrollForm.bo" />
+			<mapping path="/list.bo" />
+			<mapping path="/detail.bo" 	/>
+			<beans:bean id="loginInterceptor" class="com.kh.spring.common.interceptor.LoginInterceptor" />
+		</interceptor>
+	</interceptors>
 	 
 </beans:beans>

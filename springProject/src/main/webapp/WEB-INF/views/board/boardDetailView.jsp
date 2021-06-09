@@ -120,6 +120,8 @@
     <script>
     	$(function(){
     		selectReplyList();
+    		
+    		
     	})
     	
     	function addReply(){
